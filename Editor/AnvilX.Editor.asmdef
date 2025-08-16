@@ -1,0 +1,18 @@
+{
+    "name": "AnvilX.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5f6133f3682737646af004f7d3ef0125"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
