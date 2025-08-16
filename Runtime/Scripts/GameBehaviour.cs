@@ -6,17 +6,17 @@ namespace AnvilX
     public abstract class GameBehaviour : MonoBehaviour
     {
         [NonSerialized]
-        private ObjectRegistry registry;
+        private ObjectRegistry objectRegistry;
 
         public ObjectRegistry GetObjectRegistry()
         {
-            if (registry)
+            if (objectRegistry)
             {
-                return registry;
+                return objectRegistry;
             }
 
-            registry = DiscoverRegistry();
-            return registry;
+            objectRegistry = DiscoverRegistry();
+            return objectRegistry;
         }
 
         /// <summary>
@@ -44,13 +44,13 @@ namespace AnvilX
         public void Unregister<T>()
         {
             // Edge-case: If the registry doesn't exist, do nothing
-            if (!registry)
+            if (!objectRegistry)
             {
                 return;
             }
             
             //var dependencyRegistry = GetDependencyRegistry();
-            registry.Unregister<T>();
+            objectRegistry.Unregister<T>();
         }
 
         /// <summary>

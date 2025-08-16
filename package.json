@@ -2,5 +2,12 @@
   "name": "com.connorkerwin.anvilx",
   "version": "0.0.1",
   "displayName": "AnvilX",
-  "description": "Unity Framework Package"
+  "description": "Unity Framework Package",
+  "samples": [
+    {
+      "displayName": "Service Locator Example",
+      "description": "An example usage of the service locator pattern",
+      "path": "Samples~/Service Locator Pattern"
+    }
+  ]
 }
