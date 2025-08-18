@@ -4,8 +4,8 @@ using UnityEngine;
 namespace AnvilX
 {
     /// <summary>
-    /// A factory that hooks into the <see cref="RegistryOrchestrator"/> init flow, facilitating the creation of
-    /// global assets that are registered in the preloaded assets list.
+    /// A factory that facilitating the creation of global assets
+    /// that are registered in the preloaded assets list.
     /// </summary>
     public static class PreloadedGlobalAssetFactory
     {
@@ -17,7 +17,12 @@ namespace AnvilX
         
         private static void InitGlobalAssets()
         {
-            var globalRegistry = RegistryOrchestrator.GetGlobalRegistry();
+            // NOTE: Due to execution order constraints, we must resolve the global registry,
+            // then use that to provide a scene reference to bootstrap the instantiation.
+            // It's not possible to instantiate the objects, then transfer them, as Awake
+            // would have already fired.
+            
+            var globalRegistry = RegistryCore.GetGlobalRegistry();
             var globalScene = globalRegistry.gameObject.scene;
             
             var all = new HashSet<GlobalAssetManifest>();

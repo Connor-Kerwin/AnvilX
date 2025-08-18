@@ -105,7 +105,7 @@ namespace AnvilX
                 return instance;
             }
 
-            return RegistryOrchestrator.GetSceneRegistry(gameObject.scene);
+            return RegistryCore.EnsureRegistry(gameObject.scene);
         }
     }
 }

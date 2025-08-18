@@ -1,6 +1,6 @@
 {
     "name": "AnvilX",
-    "rootNamespace": "Game.Framework",
+    "rootNamespace": "AnvilX",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
