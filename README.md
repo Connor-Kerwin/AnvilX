@@ -20,7 +20,7 @@ public class MyService : Service<MyService>
 
 [DependsOn(
         typeof(MyService),
-        CustomPropertyName = "MyCustomService"),
+        CustomPropertyName = "MyCustomService",
         AccessModifierLevel = AccessModifierLevel.Protected)]
 public partial class MyApplicationFeature : MonoBehaviour
 {
@@ -50,7 +50,7 @@ An example of some self-documented, generated code is shown below.
 [DependsOn(typeof(EntityManager))]
 [DependsOn(
     typeof(PlayerManager),
-    CustomPropertyName = "ThePlayerManager"),
+    CustomPropertyName = "ThePlayerManager",
     AccessModifierLevel = AccessModifierLevel.Protected]
 public partial class MyFeature : MonoBehaviour
 {
