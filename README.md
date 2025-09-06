@@ -30,6 +30,7 @@ public partial class MyApplicationFeature : Feature
     }
 }
 ```
+
 ### Global Object Pattern
 AnvilX provides the concept of global prefabs, automatically instantiated before the first scene loads,
 allowing you to separate your global app behaviour, improving iteration times and allowing you to take 
@@ -38,4 +39,11 @@ advantage of multi-scene workflows.
 Simply create a GlobalAssetManifest ScriptableObject, assign it as a preloaded asset and away you go!
 All prefabs referenced in the manifest will be automatically instantiated (in the DontDestroyOnLoad scene)
 before your scene loads; in editor and the built game.
+
+### Roadmap
+
+* A high-performance generalized data framework for game data persistence.
+* A set of usage samples.
+
+**_Note: this roadmap is exploratory and subject to change as the framework evolves._**
 
