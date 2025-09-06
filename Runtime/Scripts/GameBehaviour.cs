@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace AnvilX
 {
     public abstract class GameBehaviour : MonoBehaviour
     {
-        [NonSerialized]
-        private ObjectRegistry objectRegistry;
+        [NonSerialized] private ObjectRegistry objectRegistry;
 
         public ObjectRegistry GetObjectRegistry()
         {
@@ -48,7 +50,7 @@ namespace AnvilX
             {
                 return;
             }
-            
+
             //var dependencyRegistry = GetDependencyRegistry();
             objectRegistry.Unregister<T>();
         }

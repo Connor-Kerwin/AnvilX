@@ -95,6 +95,18 @@ namespace AnvilX
             return Resolve(typeof(T)) as T;
         }
 
+        public T ResolveRequired<T>()
+            where T : class
+        {
+            var item = Resolve<T>();
+            if (item == null)
+            {
+                throw new Exception($"Failed to resolve {typeof(T).Name}");
+            }
+
+            return item;
+        }
+
         public IEnumerator<KeyValuePair<Type, object>> GetEnumerator()
         {
             return index.GetEnumerator();

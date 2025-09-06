@@ -73,6 +73,17 @@ namespace AnvilX
 
             return registry;
         }
+
+        public static ObjectRegistry EnsureRegistry(GameObject target)
+        {
+            var instance = target.GetComponentInParent<ObjectRegistry>();
+            if (instance)
+            {
+                return instance;
+            }
+
+            return EnsureRegistry(target.gameObject.scene);
+        }
         
         private static void InitializeIndex()
         {
