@@ -18,7 +18,10 @@ public class MyService : Service<MyService>
     }
 }
 
-[DependsOn(typeof(MyService), CustomPropertyName = "MyCustomService"), AccessModifierLevel = AccessModifierLevel.Protected)]
+[DependsOn(
+        typeof(MyService),
+        CustomPropertyName = "MyCustomService"),
+        AccessModifierLevel = AccessModifierLevel.Protected)]
 public partial class MyApplicationFeature : Feature
 {
     private void Start()
