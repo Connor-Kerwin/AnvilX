@@ -43,7 +43,7 @@ namespace AnvilX
         }
         
         /// <summary>
-        /// Get or create the dependency registry for <paramref name="scene"/>.
+        /// Get or create the <see cref="ObjectRegistry"/> for <paramref name="scene"/>.
         /// </summary>
         /// <param name="scene">The scene to query.</param>
         /// <returns></returns>
@@ -55,8 +55,7 @@ namespace AnvilX
                 throw new ArgumentException("Cannot create a registry in an invalid scene.", nameof(scene));
             }
             
-            // TODO: If the scene is not valid, we probably want to throw here!
-            
+            // Registry exists for scene
             if (index.TryGetValue(scene.handle, out var registry))
             {
                 return registry;
@@ -74,8 +73,16 @@ namespace AnvilX
             return registry;
         }
 
+        /// <summary>
+        /// Get or create the <see cref="ObjectRegistry"/> for <paramref name="target"/>.
+        /// The registry will be resolved based on the scene that <paramref name="target"/> resides in.
+        /// </summary>
+        /// <param name="target">The target</param>
+        /// <returns>The relevant <see cref="ObjectRegistry"/> for <paramref name="target"/>.</returns>
         public static ObjectRegistry EnsureRegistry(GameObject target)
         {
+            ParameterValidation.ThrowIfNull(target, nameof(target));
+            
             var instance = target.GetComponentInParent<ObjectRegistry>();
             if (instance)
             {
