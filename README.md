@@ -39,7 +39,7 @@ and other relevant boilerplate code to lazily resolve a dependency upon usage. T
 | Property              | Description                                                                                                   | Default Value        |
 |-----------------------|---------------------------------------------------------------------------------------------------------------|----------------------|
 | Custom Property Name  | The name to give to the generated C# property                                                                 | The name of the type |
-| Access Modifier Level | The access level to give to the generated C# property                                                         | Public               |
+| Access Modifier Level | The access level to give to the generated C# property                                                         | Protected            |
 | Optional              | Whether the dependency is optional. When false, an exception will be thrown if the dependency cannot be found | False                |
 | Resolve As            | The type to resolve the dependency as. Use this to specify a unique interface to resolve as.                  | The type             |
 

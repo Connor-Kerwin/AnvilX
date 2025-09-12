@@ -39,7 +39,7 @@ namespace AnvilX
         /// Define a dependency, defaulting all of its properties.
         /// </summary>
         /// <remarks>
-        /// Defaults to a required dependency, resolved by its own type, exposed publicly, named the same as the type.
+        /// Defaults to a required dependency, resolved by its own type, exposed as protected, named the same as the type.
         /// </remarks>
         /// <param name="type">The type of the generated property.</param>
         public DependsOnAttribute(Type type)
@@ -48,7 +48,7 @@ namespace AnvilX
             ResolveAs = type;
             Optional = false;
             CustomPropertyName = null;
-            AccessModifierLevel = AccessModifierLevel.Public;
+            AccessModifierLevel = AccessModifierLevel.Protected;
         }
     }
 
