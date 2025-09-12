@@ -43,7 +43,7 @@ and other relevant boilerplate code to lazily resolve a dependency upon usage. T
 | Optional              | Whether the dependency is optional. When false, an exception will be thrown if the dependency cannot be found | False                |
 | Resolve As            | The type to resolve the dependency as. Use this to specify a unique interface to resolve as.                  | The type             |
 
-An example of some self-documented, generated code is shown below.
+An example of some generated code is shown below.
 
 ```c#
 
@@ -170,7 +170,8 @@ before your scene loads; in editor and the built game.
 ### Roadmap
 
 * A high-performance generalized data framework for game data persistence.
-* A set of usage samples.
+* A generalized project configuration framework.
+* A sample Unity project.
 
 **_Note: this roadmap is exploratory and subject to change as the framework evolves._**
 

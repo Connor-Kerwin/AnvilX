@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AnvilX
@@ -6,7 +7,7 @@ namespace AnvilX
     /// <summary>
     /// A manifest of assets that will be automatically instantiated in a global scene during startup.
     /// </summary>
-    [CreateAssetMenu(fileName = "New Asset Manifest", menuName = "Global Asset Manifest")]
+    [CreateAssetMenu(fileName = "New Global Asset Manifest", menuName = "AnvilX/Global Assets/Manifest")]
     public class GlobalAssetManifest : ScriptableObject
     {
         /// <summary>
@@ -70,6 +71,22 @@ namespace AnvilX
                 allManifests.Add(manifest);
             }
 #endif
+        }
+
+        /// <summary>
+        /// A convenience function to make switching global asset manifests easier.
+        /// </summary>
+        [ContextMenu("Remove from preloaded assets", false)]
+        private void RemoveFromPreloadedAssets()
+        {
+            #if UNITY_EDITOR
+            var assets = UnityEditor.PlayerSettings.GetPreloadedAssets().ToList();
+            if (assets.RemoveAll(t => t == this) > 0)
+            {
+                UnityEditor.PlayerSettings.SetPreloadedAssets(assets.ToArray());
+            }
+            
+            #endif
         }
     }
 }
