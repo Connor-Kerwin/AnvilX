@@ -21,7 +21,7 @@ public class MyService : Service<MyService>
 [DependsOn(
         typeof(MyService),
         CustomPropertyName = "MyCustomService",
-        AccessModifierLevel = AccessModifierLevel.Protected)]
+        AccessModifierLevel = AccessModifierLevel.Internal)]
 public partial class MyApplicationFeature : MonoBehaviour
 {
     private void Start()
