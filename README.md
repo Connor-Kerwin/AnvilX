@@ -36,12 +36,14 @@ public partial class MyApplicationFeature : MonoBehaviour
 The DependsOn attribute is used to guide the source generator to automatically generate a C# property 
 and other relevant boilerplate code to lazily resolve a dependency upon usage. The optional parameters are shown below.
 
-| Property              | Description                                                                                                   | Default Value        |
-|-----------------------|---------------------------------------------------------------------------------------------------------------|----------------------|
-| Custom Property Name  | The name to give to the generated C# property                                                                 | The name of the type |
-| Access Modifier Level | The access level to give to the generated C# property                                                         | Protected            |
-| Optional              | Whether the dependency is optional. When false, an exception will be thrown if the dependency cannot be found | False                |
-| Resolve As            | The type to resolve the dependency as. Use this to specify a unique interface to resolve as.                  | The type             |
+| Property              | Description                                                                                                    | Default Value        |
+|-----------------------|----------------------------------------------------------------------------------------------------------------|----------------------|
+| Custom Property Name  | The name to give to the generated C# property.                                                                 | The name of the type |
+| Access Modifier Level | The access level to give to the generated C# property.                                                         | Protected            |
+| Optional              | Whether the dependency is optional. When false, an exception will be thrown if the dependency cannot be found. | False                |
+| Resolve As            | The type to resolve the dependency as. Use this to specify a unique interface to resolve as.                   | The type             |
+
+Any class using the DependsOn attribute **must** be marked as partial for it to work.
 
 An example of some generated code is shown below.
 
@@ -51,7 +53,7 @@ An example of some generated code is shown below.
 [DependsOn(
     typeof(PlayerManager),
     CustomPropertyName = "ThePlayerManager",
-    AccessModifierLevel = AccessModifierLevel.Protected]
+    AccessModifierLevel = AccessModifierLevel.Internal]
 public partial class MyFeature : MonoBehaviour
 {
     private void Start()
@@ -63,6 +65,7 @@ public partial class MyFeature : MonoBehaviour
 }
 
 // An approximation of the generated code (implementation is hidden for simplicity)
+// Note that the class must be partial for this to work!
 public partial class MyFeature
 {
     // An internal type that runs internal behaviour, injection, etc.
@@ -75,8 +78,10 @@ public partial class MyFeature
     // It should be noted that if a non-optional dependency fails to resolve, one
     // of these will throw an exception. This should help you catch missing dependencies
     // as early as possible during development.
-    public EntityManager EntityManager { get; }
-    protected PlayerManager ThePlayerManager { get; }
+    protected EntityManager EntityManager { get; } // Default to protected visibility 
+    
+    // Notice that this property is marked as internal, as defined in the attribute.
+    internal PlayerManager ThePlayerManager { get; }
     
     // These are specialized utility properties, intended for edge-case usages.
     // Imagine that your class never touches any of the dependencies. But you're
