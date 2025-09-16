@@ -71,7 +71,7 @@ public partial class MyFeature
     // An internal type that runs internal behaviour, injection, etc.
     // Direct usage of this is not recommended. This will be null until
     // properties have gone through initialization.
-    private Generated_MyFeature __Sample2_Generated;
+    private Generated_MyFeature __MyFeature_Generated;
     
     // These are the generated properties, upon access of any property, an
     // initialization flow will be invoked, triggering resolution of dependencies.
