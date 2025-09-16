@@ -2,8 +2,6 @@
 
 A framework library for building modern Unity projects, encouraging best practices and simple application design.
 
-_**AnvilX is still a work-in-progress; breaking changes are possible.**_
-
 ### Service Locator Pattern
 AnvilX provides a simple but powerful scene-centric service locator pattern that fits well with the typical Unity application lifecycle.
 
