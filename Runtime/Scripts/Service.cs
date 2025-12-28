@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace AnvilX
@@ -29,7 +30,6 @@ namespace AnvilX
         protected override void Awake()
         {
             base.Awake();
-            
             ObjectRegistry.Register<T>((T)(object)this);
         }
 

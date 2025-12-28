@@ -27,6 +27,11 @@ namespace AnvilX
             parentRegistry = parent;
         }
 
+        private void OnDestroy()
+        {
+            RegistryCore.Unregister(this);
+        }
+
         private void ThrowIfContains(Type type)
         {
             if (index.ContainsKey(type))

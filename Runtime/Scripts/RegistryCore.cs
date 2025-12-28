@@ -23,7 +23,7 @@ namespace AnvilX
             // NOTE: If we don't have a global registry, we are assuming that we're in an initialization state.
             // So we can happily kick off initialization. The only way this can be wrong, is if someone
             // destroys the global registry, which is not allowed!
-            
+
             InitializeIndex();
             InitializeGlobalRegistry();
             return globalRegistry;
@@ -38,8 +38,18 @@ namespace AnvilX
         /// uses <see cref="AnvilX"/>, <see langword="null"/> will be returned.</returns>
         public static ObjectRegistry? FindRegistry(Scene scene)
         {
-            index.TryGetValue(scene.handle, out var result);    
+            index.TryGetValue(scene.handle, out var result);
             return result;
+        }
+
+        /// <summary>
+        /// Unregister <paramref name="registry"/>.
+        /// </summary>
+        /// <param name="registry">The item to unregister.</param>
+        internal static void Unregister(ObjectRegistry registry)
+        {
+            var scene = registry.gameObject.scene;
+            index.Remove(scene.handle);
         }
         
         /// <summary>
@@ -54,7 +64,7 @@ namespace AnvilX
             {
                 throw new ArgumentException("Cannot create a registry in an invalid scene.", nameof(scene));
             }
-            
+
             // Registry exists for scene
             if (index.TryGetValue(scene.handle, out var registry))
             {
@@ -82,7 +92,7 @@ namespace AnvilX
         public static ObjectRegistry EnsureRegistry(GameObject target)
         {
             ParameterValidation.ThrowIfNull(target, nameof(target));
-            
+
             var instance = target.GetComponentInParent<ObjectRegistry>();
             if (instance)
             {
@@ -91,12 +101,15 @@ namespace AnvilX
 
             return EnsureRegistry(target.gameObject.scene);
         }
-        
+
         private static void InitializeIndex()
         {
+            // TODO: This pattern is likely not required.
+            //  OnDestroy should provide enough support for cleanup of entries
+            
             // NOTE: In the Unity editor, we want to support domain reloading, so we clear out the index
             // whenever we've hit a reset scenario.
-            
+
             index.Clear();
         }
 
@@ -104,10 +117,10 @@ namespace AnvilX
         {
             var instance = new GameObject("[ObjectRegistry]");
             UnityEngine.Object.DontDestroyOnLoad(instance);
-            
+
             var registry = instance.AddComponent<ObjectRegistry>();
             registry.InitRegistry(null);
-            
+
             index[instance.scene.handle] = registry;
             globalRegistry = registry;
         }
