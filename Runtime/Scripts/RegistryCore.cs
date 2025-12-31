@@ -12,7 +12,7 @@ namespace AnvilX
     {
         private static ObjectRegistry globalRegistry;
         private static readonly Dictionary<int, ObjectRegistry> index = new();
-
+        
         public static ObjectRegistry GetGlobalRegistry()
         {
             if (globalRegistry)
