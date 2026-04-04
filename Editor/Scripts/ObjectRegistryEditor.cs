@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace AnvilX
     [CustomEditor(typeof(ObjectRegistry))]
     internal class ObjectRegistryEditor : Editor
     {
+        private HashSet<ObjectRegistry> cache = new();
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -13,48 +16,56 @@ namespace AnvilX
             DrawDefaultInspector();
 
             serializedObject.ApplyModifiedProperties();
-
+            
             var registry = (ObjectRegistry)target;
+            
             if (registry.didAwake)
             {
-                EditorGUILayout.LabelField("Registered Objects", EditorStyles.boldLabel);
+                EditorGUILayout.Space();
                 DrawRegistryItemsRecursive(registry);
             }
         }
 
         private void DrawRegistryItemsRecursive(ObjectRegistry registry)
         {
-            while (registry)
+            cache.Clear();
+
+            cache.Add(registry);
+            DrawRegistryItems(registry, "Registered Objects");
+            EditorGUILayout.Space();
+
+            foreach (var group in registry.readFrom)
             {
-                DrawRegistryItems(registry);
-                registry = registry.ParentRegistry;
+                foreach (var groupRegistry in group)
+                {
+                    
+                    Debug.Log(groupRegistry.name);
+                    if (!cache.Add(groupRegistry))
+                    {
+                        continue;
+                    }
+
+                    DrawRegistryItems(groupRegistry, group.name);
+                    EditorGUILayout.Space();
+                }
             }
         }
 
-        private string GetRegistrySuffix(ObjectRegistry registry)
+        private void DrawRegistryItems(ObjectRegistry registry, string header)
         {
-            var isInherited = registry != (ObjectRegistry)target;
-            if (isInherited)
-            {
-                return "(inherited)";
-            }
+            //var suffix = GetRegistrySuffix(registry);
 
-            return "";
-        }
-
-        private void DrawRegistryItems(ObjectRegistry registry)
-        {
-            var suffix = GetRegistrySuffix(registry);
+            GUILayout.Label(header, EditorStyles.boldLabel);
 
             foreach (var kvp in registry)
             {
                 if (kvp.Value is Object uObj)
                 {
-                    EditorGUILayout.ObjectField($"{kvp.Key.Name} {suffix}", uObj, typeof(Object), true);
+                    EditorGUILayout.ObjectField($"{kvp.Key.Name}", uObj, typeof(Object), true);
                 }
                 else
                 {
-                    EditorGUILayout.LabelField($"{kvp.Key.Name} {suffix}", $"{kvp.Value}");
+                    EditorGUILayout.LabelField($"{kvp.Key.Name}", $"{kvp.Value}");
                 }
             }
         }

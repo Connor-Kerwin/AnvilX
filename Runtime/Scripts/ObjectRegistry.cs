@@ -5,48 +5,58 @@ using UnityEngine;
 
 namespace AnvilX
 {
-    [AddComponentMenu("")]
-    public class ObjectRegistry : MonoBehaviour, IEnumerable<KeyValuePair<Type, object>>
+    [DefaultExecutionOrder(-10000)]
+    public class ObjectRegistry : MonoBehaviour, IObjectResolver, IEnumerable<KeyValuePair<Type, object>>
     {
-        private readonly Dictionary<Type, object> index = new();
+        private bool ready;
+        private Dictionary<Type, object> index;
+        
+        // TODO: In scenarios where registries are duplicated, should we break when used? Probably!
 
-        private ObjectRegistry parentRegistry;
+        [Tooltip("The global priority of this registry, used to decide which registries to scan first when resolving a cross-scene dependency.")]
+        [SerializeField] private int priority;
+        
+        [SerializeField]
+        [Tooltip("The service groups to write to. This exposes registered objects in this scene to other scenes, allowing cross-scene object resolution.")]
+        internal List<ServiceGroup> writeTo = new();
+        
+        [SerializeField] 
+        [Tooltip("The service groups to read from when resolving a dependency that is not in the scene.")]
+        internal List<ServiceGroup> readFrom = new();
 
         /// <summary>
-        /// The total number of items registered into the registry.
+        /// The global priority of this registry, used when systems are deciding between multiple <see cref="ObjectRegistry"/> to scan.
+        /// </summary>
+        public int Priority => priority;
+
+        /// <summary>
+        /// The number of items stored in the registry.
         /// </summary>
         public int Count => index.Count;
 
-        /// <summary>
-        /// The parent registry that will be used as a fallback when resolving a dependency that doesn't exist in this registry.
-        /// </summary>
-        public ObjectRegistry ParentRegistry => parentRegistry;
-        
-        internal void InitRegistry(ObjectRegistry parent)
+        private void Awake()
         {
-            parentRegistry = parent;
+            index = new Dictionary<Type, object>();
+            
+            // Handle failure scenario
+            if (!RegistryCore.Add(this))
+            {
+                Debug.LogError(
+                    $"An instance of {nameof(ObjectRegistry)} already exists within this scene. You can only have one per scene!", this);
+                return;
+            }
+
+            ready = true;
         }
 
         private void OnDestroy()
         {
-            RegistryCore.Unregister(this);
-        }
-
-        private void ThrowIfContains(Type type)
-        {
-            if (index.ContainsKey(type))
+            if (ready)
             {
-                throw new InvalidOperationException($"Duplicate item of type {type} in {name}");
+                RegistryCore.Remove(this);
             }
         }
-        
-        /// <summary>
-        /// Register <paramref name="target"/> as <paramref name="type"/>.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="type"></param>
-        /// <exception cref="InvalidOperationException">Thrown if the type is already registered.</exception>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="target"/> is not assignable to <paramref name="type"/>.</exception>
+
         public void Register(object target, Type type)
         {
             ThrowIfContains(type);
@@ -58,58 +68,55 @@ namespace AnvilX
 
             index.Add(type, target);
         }
-
-        /// <summary>
-        /// Register <paramref name="target"/> as <typeparamref name="T"/>.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <exception cref="InvalidOperationException">Thrown if the type is already registered.</exception>
-        public void Register<T>(T target)
-        {
-            var type = typeof(T);
-            ThrowIfContains(type);
-            index.Add(type, target);
-        }
-
+        
         public void Unregister(Type type)
         {
             index.Remove(type);
+        }
+        
+        public void Register<T>(T target)
+        {
+            Register(target, typeof(T));
         }
 
         public void Unregister<T>()
         {
             Unregister(typeof(T));
         }
-
+        
         public object Resolve(Type type)
         {
-            index.TryGetValue(type, out var result);
+            // First-pass, search self
+            var result = ResolveObject(type);
 
-            if (result == null && parentRegistry)
+            // Second-pass, search service groups
+            if (result == null)
             {
-                result = parentRegistry.Resolve(type);
+                foreach (var scope in readFrom)
+                {
+                    result = scope.Resolve(type);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
             }
 
             return result;
         }
 
-        public T Resolve<T>()
-            where T : class
+        internal object ResolveObject(Type type)
         {
-            return Resolve(typeof(T)) as T;
+            index.TryGetValue(type, out var result);
+            return result;
         }
 
-        public T ResolveRequired<T>()
-            where T : class
+        private void ThrowIfContains(Type type)
         {
-            var item = Resolve<T>();
-            if (item == null)
+            if (index.ContainsKey(type))
             {
-                throw new Exception($"Failed to resolve {typeof(T).Name}");
+                throw new InvalidOperationException($"Duplicate item of type {type}");
             }
-
-            return item;
         }
 
         public IEnumerator<KeyValuePair<Type, object>> GetEnumerator()

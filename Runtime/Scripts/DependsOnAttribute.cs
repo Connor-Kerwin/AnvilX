@@ -6,6 +6,7 @@ namespace AnvilX
     /// Facilitates automatic source generation for a dependency.
     /// Use this to auto-generate a lazy-accessor property on your type.
     /// </summary>
+    [Obsolete("This attribute is not currently in use.")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class DependsOnAttribute : Attribute
     {

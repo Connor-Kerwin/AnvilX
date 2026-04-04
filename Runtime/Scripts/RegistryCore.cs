@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,124 +7,90 @@ using UnityEngine.SceneManagement;
 
 namespace AnvilX
 {
-    /// <summary>
-    /// Orchestrates core functionality of the dependency framework.
-    /// </summary>
     public static class RegistryCore
     {
-        private static ObjectRegistry globalRegistry;
-        private static readonly Dictionary<int, ObjectRegistry> index = new();
+        private static readonly Dictionary<SceneHandle, ObjectRegistry> Index = new();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        private static void InitializeGlobalObjectRegistry()
+        {
+            // We clear here because we're initializing the whole system
+            Index.Clear();
+            
+            // Spawn in the global registry
+            var frameworkAssets = FrameworkAssets.GetFrameworkAssets();
+            GlobalAssetFactory.Instantiate(frameworkAssets.GlobalObjectRegistryPrefab);
+        }
         
-        public static ObjectRegistry GetGlobalRegistry()
-        {
-            if (globalRegistry)
-            {
-                return globalRegistry;
-            }
-
-            // NOTE: If we don't have a global registry, we are assuming that we're in an initialization state.
-            // So we can happily kick off initialization. The only way this can be wrong, is if someone
-            // destroys the global registry, which is not allowed!
-
-            InitializeIndex();
-            InitializeGlobalRegistry();
-            return globalRegistry;
-        }
-
         /// <summary>
-        /// Attempt to find the <see cref="ObjectRegistry"/> for <paramref name="scene"/>.
+        /// Add <paramref name="registry"/>.
         /// </summary>
-        /// <param name="scene">The scene to query.</param>
-        /// <returns>The registry in <paramref name="scene"/>. If <see cref="Scene.IsValid"/>
-        /// is <see langword="false"/> for <paramref name="scene"/>, or if nothing in <paramref name="scene"/>
-        /// uses <see cref="AnvilX"/>, <see langword="null"/> will be returned.</returns>
-        public static ObjectRegistry? FindRegistry(Scene scene)
+        /// <param name="registry">The registry to add.</param>
+        /// <returns>Whether the registry was added. Failure is typically caused by having multiple instances in a single scene.</returns>
+        internal static bool Add(ObjectRegistry registry)
         {
-            index.TryGetValue(scene.handle, out var result);
-            return result;
+            var handle = registry.gameObject.scene.handle;
+            if (!Index.TryAdd(handle, registry))
+            {
+                return false;
+            }
+            
+            // Associate the registry with chosen write scopes
+            foreach (var group in registry.writeTo)
+            {
+                if (!group)
+                {
+                    continue;
+                }
+               
+                group.Add(registry);
+            }
+            
+            return true;
         }
-
+        
         /// <summary>
-        /// Unregister <paramref name="registry"/>.
+        /// Remove <paramref name="registry"/>.
         /// </summary>
         /// <param name="registry">The item to unregister.</param>
-        internal static void Unregister(ObjectRegistry registry)
+        internal static void Remove(ObjectRegistry registry)
         {
             var scene = registry.gameObject.scene;
-            index.Remove(scene.handle);
+            Index.Remove(scene.handle);
+
+            // Detach the registry from associated groups
+            foreach (var group in registry.writeTo)
+            {
+                if (!group)
+                {
+                    continue;
+                }
+
+                group.Remove(registry);
+            }
         }
-        
-        /// <summary>
-        /// Get or create the <see cref="ObjectRegistry"/> for <paramref name="scene"/>.
-        /// </summary>
-        /// <param name="scene">The scene to query.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">Thrown if <see cref="Scene.IsValid"/> is <see langword="false"/> for <paramref name="scene"/>.</exception>
-        public static ObjectRegistry EnsureRegistry(Scene scene)
+
+        public static ObjectRegistry? FindRegistry(GameObject target)
         {
-            if (!scene.IsValid())
-            {
-                throw new ArgumentException("Cannot create a registry in an invalid scene.", nameof(scene));
-            }
+            return FindRegistry(target.scene);
+        }
 
-            // Registry exists for scene
-            if (index.TryGetValue(scene.handle, out var registry))
-            {
-                return registry;
-            }
-
-            var parentRegistry = GetGlobalRegistry();
-            var instance = new GameObject("[ObjectRegistry]");
-            registry = instance.AddComponent<ObjectRegistry>();
-            registry.InitRegistry(parentRegistry);
-
-            index[scene.handle] = registry;
-
-            SceneManager.MoveGameObjectToScene(instance, scene);
-
+        public static ObjectRegistry? FindRegistry(Scene scene)
+        {
+            Index.TryGetValue(scene.handle, out var registry);
             return registry;
         }
 
-        /// <summary>
-        /// Get or create the <see cref="ObjectRegistry"/> for <paramref name="target"/>.
-        /// The registry will be resolved based on the scene that <paramref name="target"/> resides in.
-        /// </summary>
-        /// <param name="target">The target</param>
-        /// <returns>The relevant <see cref="ObjectRegistry"/> for <paramref name="target"/>.</returns>
-        public static ObjectRegistry EnsureRegistry(GameObject target)
+        public static ObjectRegistry FindRequiredRegistry(GameObject target)
         {
-            ParameterValidation.ThrowIfNull(target, nameof(target));
-
-            var instance = target.GetComponentInParent<ObjectRegistry>();
-            if (instance)
-            {
-                return instance;
-            }
-
-            return EnsureRegistry(target.gameObject.scene);
+            var registry = FindRegistry(target);
+            return !registry ? throw new Exception("Required registry not found") : registry;
         }
 
-        private static void InitializeIndex()
+        public static ObjectRegistry FindRequiredRegistry(Scene scene)
         {
-            // TODO: This pattern is likely not required.
-            //  OnDestroy should provide enough support for cleanup of entries
-            
-            // NOTE: In the Unity editor, we want to support domain reloading, so we clear out the index
-            // whenever we've hit a reset scenario.
-
-            index.Clear();
-        }
-
-        private static void InitializeGlobalRegistry()
-        {
-            var instance = new GameObject("[ObjectRegistry]");
-            UnityEngine.Object.DontDestroyOnLoad(instance);
-
-            var registry = instance.AddComponent<ObjectRegistry>();
-            registry.InitRegistry(null);
-
-            index[instance.scene.handle] = registry;
-            globalRegistry = registry;
+            var registry = FindRegistry(scene);
+            return !registry ? throw new Exception("Required registry not found") : registry;
         }
     }
 }

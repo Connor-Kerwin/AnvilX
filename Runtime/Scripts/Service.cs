@@ -10,13 +10,13 @@ namespace AnvilX
     public abstract class Service : MonoBehaviour
     {
         /// <summary>
-        /// The object registry that the service is using.
+        /// The registry that the service is using.
         /// </summary>
-        protected ObjectRegistry ObjectRegistry { get; private set; }
+        protected ObjectRegistry Registry { get; private set; }
         
         protected virtual void Awake()
         {
-            ObjectRegistry = RegistryCore.EnsureRegistry(gameObject);
+            Registry = RegistryCore.FindRequiredRegistry(gameObject);
         }
     }
 
@@ -30,12 +30,12 @@ namespace AnvilX
         protected override void Awake()
         {
             base.Awake();
-            ObjectRegistry.Register<T>((T)(object)this);
+            Registry.Register((T)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T>();
+            Registry.Unregister<T>();
         }
     }
 
@@ -51,14 +51,14 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
+            Registry.Register((T1)(object)this);
+            Registry.Register((T2)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
         }
     }
     
@@ -75,16 +75,16 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
-            ObjectRegistry.Register<T3>((T3)(object)this);
+            Registry.Register((T1)(object)this);
+            Registry.Register((T2)(object)this);
+            Registry.Register((T3)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
-            ObjectRegistry.Unregister<T3>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
+            Registry.Unregister<T3>();
         }
     }
     
@@ -102,18 +102,18 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
-            ObjectRegistry.Register<T3>((T3)(object)this);
-            ObjectRegistry.Register<T4>((T4)(object)this);
+            Registry.Register((T1)(object)this);
+            Registry.Register((T2)(object)this);
+            Registry.Register((T3)(object)this);
+            Registry.Register((T4)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
-            ObjectRegistry.Unregister<T3>();
-            ObjectRegistry.Unregister<T4>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
+            Registry.Unregister<T3>();
+            Registry.Unregister<T4>();
         }
     }
     
@@ -132,20 +132,20 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
-            ObjectRegistry.Register<T3>((T3)(object)this);
-            ObjectRegistry.Register<T4>((T4)(object)this);
-            ObjectRegistry.Register<T5>((T5)(object)this);
+            Registry.Register<T1>((T1)(object)this);
+            Registry.Register<T2>((T2)(object)this);
+            Registry.Register<T3>((T3)(object)this);
+            Registry.Register<T4>((T4)(object)this);
+            Registry.Register<T5>((T5)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
-            ObjectRegistry.Unregister<T3>();
-            ObjectRegistry.Unregister<T4>();
-            ObjectRegistry.Unregister<T5>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
+            Registry.Unregister<T3>();
+            Registry.Unregister<T4>();
+            Registry.Unregister<T5>();
         }
     }
     
@@ -165,22 +165,22 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
-            ObjectRegistry.Register<T3>((T3)(object)this);
-            ObjectRegistry.Register<T4>((T4)(object)this);
-            ObjectRegistry.Register<T5>((T5)(object)this);
-            ObjectRegistry.Register<T6>((T6)(object)this);
+            Registry.Register<T1>((T1)(object)this);
+            Registry.Register<T2>((T2)(object)this);
+            Registry.Register<T3>((T3)(object)this);
+            Registry.Register<T4>((T4)(object)this);
+            Registry.Register<T5>((T5)(object)this);
+            Registry.Register<T6>((T6)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
-            ObjectRegistry.Unregister<T3>();
-            ObjectRegistry.Unregister<T4>();
-            ObjectRegistry.Unregister<T5>();
-            ObjectRegistry.Unregister<T6>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
+            Registry.Unregister<T3>();
+            Registry.Unregister<T4>();
+            Registry.Unregister<T5>();
+            Registry.Unregister<T6>();
         }
     }
     
@@ -201,24 +201,24 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
-            ObjectRegistry.Register<T3>((T3)(object)this);
-            ObjectRegistry.Register<T4>((T4)(object)this);
-            ObjectRegistry.Register<T5>((T5)(object)this);
-            ObjectRegistry.Register<T6>((T6)(object)this);
-            ObjectRegistry.Register<T7>((T7)(object)this);
+            Registry.Register<T1>((T1)(object)this);
+            Registry.Register<T2>((T2)(object)this);
+            Registry.Register<T3>((T3)(object)this);
+            Registry.Register<T4>((T4)(object)this);
+            Registry.Register<T5>((T5)(object)this);
+            Registry.Register<T6>((T6)(object)this);
+            Registry.Register<T7>((T7)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
-            ObjectRegistry.Unregister<T3>();
-            ObjectRegistry.Unregister<T4>();
-            ObjectRegistry.Unregister<T5>();
-            ObjectRegistry.Unregister<T6>();
-            ObjectRegistry.Unregister<T7>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
+            Registry.Unregister<T3>();
+            Registry.Unregister<T4>();
+            Registry.Unregister<T5>();
+            Registry.Unregister<T6>();
+            Registry.Unregister<T7>();
         }
     }
     
@@ -240,26 +240,26 @@ namespace AnvilX
         {
             base.Awake();
             
-            ObjectRegistry.Register<T1>((T1)(object)this);
-            ObjectRegistry.Register<T2>((T2)(object)this);
-            ObjectRegistry.Register<T3>((T3)(object)this);
-            ObjectRegistry.Register<T4>((T4)(object)this);
-            ObjectRegistry.Register<T5>((T5)(object)this);
-            ObjectRegistry.Register<T6>((T6)(object)this);
-            ObjectRegistry.Register<T7>((T7)(object)this);
-            ObjectRegistry.Register<T8>((T8)(object)this);
+            Registry.Register<T1>((T1)(object)this);
+            Registry.Register<T2>((T2)(object)this);
+            Registry.Register<T3>((T3)(object)this);
+            Registry.Register<T4>((T4)(object)this);
+            Registry.Register<T5>((T5)(object)this);
+            Registry.Register<T6>((T6)(object)this);
+            Registry.Register<T7>((T7)(object)this);
+            Registry.Register<T8>((T8)(object)this);
         }
 
         protected virtual void OnDestroy()
         {
-            ObjectRegistry.Unregister<T1>();
-            ObjectRegistry.Unregister<T2>();
-            ObjectRegistry.Unregister<T3>();
-            ObjectRegistry.Unregister<T4>();
-            ObjectRegistry.Unregister<T5>();
-            ObjectRegistry.Unregister<T6>();
-            ObjectRegistry.Unregister<T7>();
-            ObjectRegistry.Unregister<T8>();
+            Registry.Unregister<T1>();
+            Registry.Unregister<T2>();
+            Registry.Unregister<T3>();
+            Registry.Unregister<T4>();
+            Registry.Unregister<T5>();
+            Registry.Unregister<T6>();
+            Registry.Unregister<T7>();
+            Registry.Unregister<T8>();
         }
     }
 }
