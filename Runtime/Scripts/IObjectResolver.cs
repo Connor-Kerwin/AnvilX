@@ -23,7 +23,7 @@ namespace AnvilX
             var instance = resolver.Resolve(typeof(T)) as T;
             if (instance == null)
             {
-                throw new Exception($"Failed to resolve required dependency '{nameof(T)}'");
+                throw new Exception($"Failed to resolve required dependency '{typeof(T).Name}'");
             }
 
             return instance;

@@ -38,8 +38,6 @@ namespace AnvilX
             {
                 foreach (var groupRegistry in group)
                 {
-                    
-                    Debug.Log(groupRegistry.name);
                     if (!cache.Add(groupRegistry))
                     {
                         continue;

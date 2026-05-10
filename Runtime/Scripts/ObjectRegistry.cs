@@ -34,6 +34,8 @@ namespace AnvilX
         /// </summary>
         public int Count => index.Count;
 
+        public event Action InitializeServices;
+
         private void Awake()
         {
             index = new Dictionary<Type, object>();
@@ -47,6 +49,11 @@ namespace AnvilX
             }
 
             ready = true;
+        }
+
+        private void Start()
+        {
+            InitializeServices?.Invoke();
         }
 
         private void OnDestroy()
@@ -107,7 +114,14 @@ namespace AnvilX
 
         internal object ResolveObject(Type type)
         {
-            index.TryGetValue(type, out var result);
+            if (index.TryGetValue(type, out var result))
+            {
+                if (result is IObjectResolutionEventReceiver receiver)
+                {
+                    receiver.NotifyResolution();
+                }    
+            }
+            
             return result;
         }
 
