@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,7 +19,14 @@ namespace AnvilX
             Index.Clear();
             
             // Spawn in the global registry
-            var frameworkAssets = FrameworkAssets.GetFrameworkAssets();
+            var assetRegistry = PreloadedAssetRegistry<FrameworkAssets>.GetRegistry();
+            var frameworkAssets = assetRegistry.FirstOrDefault();
+            if (!frameworkAssets) // Handle missing assets
+            {
+                throw new InvalidOperationException(
+                    "Failed to get framework assets. Configure your project by running AnvilX/Configure Framework Assets on the top bar");
+            }
+            
             GlobalAssetFactory.Instantiate(frameworkAssets.GlobalObjectRegistryPrefab);
         }
         

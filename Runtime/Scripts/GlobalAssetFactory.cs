@@ -18,10 +18,12 @@ namespace AnvilX
         
         private static void InitGlobalAssets()
         {
-            var all = new List<GlobalAssetManifest>();
-            GlobalAssetManifest.GetAllManifests(all);
+            var registry = PreloadedAssetRegistry<GlobalAssetManifest>.GetRegistry();
+            //
+            // var all = new List<GlobalAssetManifest>();
+            // GlobalAssetManifest.GetAllManifests(all);
 
-            foreach (var manifest in all)
+            foreach (var manifest in registry)
             {
                 foreach (var asset in manifest.Prefabs)
                 {
